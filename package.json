@@ -1,0 +1,21 @@
+{
+  "name": "wardrobe-backend",
+  "version": "0.1.0",
+  "description": "Backend service for wardrobe management application",
+  "scripts": {
+    "start": "docker-compose up --build",
+    "start:detach": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "nuke": "docker-compose down -v && docker system prune -f",
+    "logs": "docker-compose logs -f",
+    "ps": "docker-compose ps",
+    "build": "docker-compose build",
+    "rebuild": "docker-compose build --no-cache",
+    "shell:web": "docker-compose exec web bash",
+    "shell:db": "docker-compose exec db bash",
+    "test": "docker-compose exec web python manage.py test",
+    "makemigrations": "docker-compose exec web python manage.py makemigrations",
+    "migrate": "docker-compose exec web python manage.py migrate",
+    "createsuperuser": "docker-compose exec web python manage.py createsuperuser"
+  }
+}

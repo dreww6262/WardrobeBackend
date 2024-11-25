@@ -1,0 +1,52 @@
+services:
+  wardrobe-backend:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: wardrobe-backend
+    command: python /code/manage.py dev
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    links:
+      - db:postgres
+    networks:
+      - wardrobe-infra
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: "30s"
+      timeout: "1s"
+      retries: 10
+    restart: always
+
+
+  db:
+    image: postgres:16.1
+    container_name: wardrobe-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=wardrobe
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "15432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: "1s"
+      timeout: "1s"
+      retries: 10
+    networks:
+      - wardrobe-infra
+
+volumes:
+  postgres_data:
+
+networks:
+  wardrobe-infra:
+    driver: bridge
